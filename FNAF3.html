@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.1.0/dist/aframe-extras.min.js"></script>
+    <script src="control.js"></script>
+    <script src="camera.js"></script>
+	<script src="Springtrap.js"></script>
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <a-scene cursor="rayOrigin: mouse">
+      <a-assets>
+        <a-asset-item id="springtrap" src="springtrap/scene.gltf"></a-asset-item>
+        <a-asset-item id="map" src="fnaf_3_map/scene.gltf"></a-asset-item>
+        <a-sound id="AudioLure" src="AudioLure.mp3"></a-sound> 
+		<a-sound id="reboot" src="reboot.mp3"></a-sound>
+		<a-sound id="jumpscare" src="Jumpscare.mp3"> </a-sound>
+		<a-sound id="winSound" src="win.mp3"></a-sound>
+      </a-assets>
+      <a-gltf-model src="#map"></a-gltf-model>
+      <a-plane color="brown" position="0 0 -5" rotation="-90 0 0" width="50" height="50"></a-plane>
+      <a-sky color="white"></a-sky>
+      <a-camera active id="camera" position="5 2.5 4" log-camera-position>
+	  	<a-image position="0 0 -1" id="BB" height="2" width="4" opacity="0" src="bbjumpScare.jpg"></a-image>
+		<a-image position="0 0 -1" id="ST" height="2" width="4" opacity="0" src="STjumpscare.jpg"></a-image>
+		<a-image position="0 0 -1" id="win" height="2" width="4" opacity="0" src="win.jpg"></a-image>
+		<a-entity class="interact" position="-0.75 -0.65 -1">
+			<a-image id="button1" height="0.2" src="button.png"></a-image>
+			<a-plane opacity="0" height="0.1" width="1" position="0 0 0"></a-plane>
+		</a-entity>
+		<a-entity class="interact" position="0.75 -0.65 -1">
+			<a-image id="button2" height="0.2" src="button.png"></a-image>
+			<a-plane opacity="0" height="0.1" width="1" position="0 0 0"></a-plane>
+		</a-entity>
+		
+        <a-cursor fuse="false" raycaster="objects:[clickable]"></a-cursor>
+        <a-text color="cyan" id="time" value="Time: 0" position="-0.15 0.065 -0.1" scale="0.05 0.05 0.05"></a-text>
+        <a-text color="cyan" id="clock" value="Clock: 12AM" position="0.1 0.065 -0.1" scale="0.05 0.05 0.05"></a-text>
+        <a-text color="cyan" id="audioErrorMessage" value="Audio Error" position="-0.155 0.05 -0.1" scale="0.025 0.025 0.025"></a-text>
+        <a-text color="cyan" id="ventilationErrorMessage" value="Ventilation Error" position="-0.155 0.04 -0.1" scale="0.025 0.025 0.025"></a-text>
+        <a-text color="cyan" id="cameraErrorMessage" value="Camera Error" position="-0.155 0.03 -0.1" scale="0.025 0.025 0.025"></a-text>
+        <a-entity id="controlPanel" position="0 1.6 -3" visible="false">
+          <a-box position="0 -1.5 0" width="3" height="2" depth="0.1" color="black"></a-box>
+          <a-entity position="-1 -1 0.1" class="clickable">
+            <a-text value="Audio Error" color="green" id="audioError"></a-text>
+            <a-plane position="1 0 0" width="2.5" height="0.5" opacity="0"></a-plane>
+          </a-entity>
+          <a-entity position="-1 -1.5 0.1" class="clickable">
+            <a-text value="Ventilation Error" color="green" id="ventilationError"></a-text>
+            <a-plane position="1 0 0" width="2.5" height="0.5" opacity="0"></a-plane>
+          </a-entity>
+          <a-entity position="-1 -2 0.1" class="clickable">
+            <a-text value="Camera System Error" color="green" id="cameraError"></a-text>
+            <a-plane position="1 0 0" width="2.5" height="0.5" opacity="0"></a-plane>
+          </a-entity>
+        </a-entity>
+        <a-entity id="cameraSystem" position="0.125 0.025 -0.1" visible="false">
+		  <a-image src="map.png" id="minimap" width="0.1" height="0.05"></a-image>
+        </a-entity>
+      </a-camera>
+    </a-scene>
+  </body>
+</html>
