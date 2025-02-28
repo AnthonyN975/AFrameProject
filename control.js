@@ -23,6 +23,7 @@ class Boxes {
         button2.setAttribute("clickable", "");
 		
 		Errors();
+		
 
         button1.addEventListener("click", () => {
 		    if(isBlinking == false){
@@ -122,20 +123,27 @@ class Boxes {
 
 
         audioError.addEventListener("click", () => {
-			blinkText(audioError, audioErrorMessage);
-			audioCounter = 0;
-			prevAudio = audioCounter
+			if(Controlclick){
+				blinkText(audioError, audioErrorMessage);
+				audioCounter = 0;
+				prevAudio = audioCounter
+			}
 		})
         ventilationError.addEventListener("click", () => {
-		    blinkText(ventilationError, ventilationErrorMessage);	
-			ventCounter = 0;
-			ventUsed = ventCounter;
-			prevVent = ventUsed;
-			
+			if(Controlclick){
+		    	blinkText(ventilationError, ventilationErrorMessage);	
+				ventCounter = 0;
+				ventUsed = ventCounter;
+				prevVent = ventUsed;
+			}
 		})
         cameraError.addEventListener("click", () => {
-            blinkText(cameraError, cameraErrorMessage); 
-            cameraCounter = 0; 
+			if(Controlclick){
+		    	blinkText(ventilationError, ventilationErrorMessage);	
+				ventCounter = 0;
+				ventUsed = ventCounter;
+				prevVent = ventUsed;
+			}
         })
     }
 }

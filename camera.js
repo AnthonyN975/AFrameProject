@@ -55,10 +55,11 @@ class Camera {
 
         this.audio.append(audioText);
 	    document.querySelector("#cameraSystem").append(this.audio);
+		
 
 		
         this.audio.addEventListener("click", () => {
-            if (audioCounter <= 5) {
+            if (audioCounter < 5) {
                 this.audioLure();
 				this.audio.setAttribute("position", "10000 -0.0175 0"); 
 				this.toggle.setAttribute("position", "10000 -0.0175 0"); 
@@ -92,7 +93,7 @@ class Camera {
 	    document.querySelector("#cameraSystem").append(this.vent);
 		
         this.vent.addEventListener("click", () => {
-            if (ventCounter <= 12) {
+            if (ventCounter <= 11) {
                 this.closeVent();
 				this.vent.setAttribute("position", "10000 -0.0175 0"); 
 				this.toggle.setAttribute("position", "10000 -0.0175 0"); 
@@ -177,8 +178,6 @@ class Camera {
 		
     audioLure() {
         audioCounter++;
-		let goto_x = this.cx;
-		let goto_z = this.cz;
         if (audioCounter >= 5) {
             AudiosError = true;
         }

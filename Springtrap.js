@@ -56,23 +56,6 @@ class Springtrap {
 		this.obj.setAttribute("animation-mixer", "clip: springtrap_v9_1_skeleton|idlepain");
 	}
 	
-	crouchIdle(){
-		this.obj.setAttribute("animation-mixer", "clip: springtrap_v9_1_skeleton|crouch");
-	}
-	
-	run(){
-		this.z += this.dz * 2
-        this.obj.setAttribute("position", `${this.x} 0 ${this.z}`);
-		this.obj.setAttribute("animation-mixer", "clip: springtrap_v9_1_skeleton|runpain");
-	}
-	
-	runFast(){
-		this.z += this.dz * 4
-        this.obj.setAttribute("position", `${this.x} 0 ${this.z}`);
-		this.obj.setAttribute("animation-mixer", "clip: springtrap_v9_1_skeleton|run");
-	}
-	
-	
 	locked(){
 		this.obj.setAttribute("animation-mixer", "clip: springtrap_v9_1_skeleton|locked");
 	}

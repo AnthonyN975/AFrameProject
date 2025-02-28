@@ -26,15 +26,19 @@ let prevVentCamera = {x: -9.61, y: 2.5, z: -13.10};
 let springtrap;
 
 let pos;
-let timeoutTriggered = false;
+
+let moving = true;
 
 let cameraSystem = document.querySelector("#cameraSystem");
+let controlPanel = document.querySelector("#controlPanel");
 
-let epsilon = 0.01
+let epsilon = 0.02;
 
-let whichWay1, whichWay2, whichWay3, whichWay4, whichWay5, whichWay6, whichWay7, whichWay8, whichWay9, whichWay10;
+let whichWay1 = -1, whichWay2 = -1, whichWay3 = -1, whichWay4 = -1, whichWay5 = -1, whichWay6 = -1, whichWay7 = -1, whichWay8 = -1, whichWay9 = -1, whichWay10 = -1, whichWay11 = -1, whichWay12 = -1, whichWay13 = -1, whichWay14 = -1, whichWay15 = -1, whichWay16 = -1, whichWay17 = -1, whichWay18 = -1
 
 let move = true;
+
+let loss = false;
 
 
 window.onload = function () {
@@ -42,6 +46,8 @@ window.onload = function () {
     let camera = document.querySelector("#camera");
     let time = document.querySelector("#time");
     let clock = document.querySelector("#clock");
+	
+	camera.removeAttribute("wasd-controls"); 
 
     if (!cameraSystem) {
         cameraSystem = document.createElement("a-entity");
@@ -55,9 +61,9 @@ window.onload = function () {
     countdown();
 	loop();
 
-    //setInterval(() => {
-    //    console.log(camera.getAttribute("position"));
-    //}, 100);
+    setInterval(() => {
+        console.log(camera.getAttribute("position"));
+    }, 100);
 
     mapCameraButtons = [
         new Camera(-0.01375, -0.015, 0, -10.55, 6, 8.01, false),
@@ -113,6 +119,65 @@ window.onload = function () {
 	
 }
 
+function defeat() {
+	let lose = document.createElement("a-image")
+	lose.setAttribute("position", "0 0 -2");
+	lose.setAttribute("height", "6");
+	lose.setAttribute("width", "12");
+	lose.setAttribute("src", "lose.jpg");
+	camera.append(lose);
+	let gameOver = document.querySelector("#gameOver");
+	gameOver.components.sound.playSound();
+}
+
+function victory() {
+	let win = document.createElement("a-image")
+	win.setAttribute("position", "0 0 -2");
+	win.setAttribute("height", "6");
+	win.setAttribute("width", "12");
+	win.setAttribute("src", "win.jpg");
+	camera.append(win);
+	let winSound = document.querySelector("#winSound");
+	winSound.components.sound.playSound(); 
+	
+}
+
+function BBjumpscare(){
+	ventCounter+=2;
+	let BBJS = document.createElement("a-image")
+	BBJS.setAttribute("position", "0 0 -2");
+	BBJS.setAttribute("height", "5");
+	BBJS.setAttribute("width", "8");
+	BBJS.setAttribute("src" , "bbjumpScare.jpg");
+	camera.append(BBJS);
+	let jumpscare = document.querySelector("#jumpscare");
+	jumpscare.components.sound.playSound(); 
+	cameraSystem.setAttribute("visible", false);
+	controlPanel.setAttribute("visible", false);
+	
+	setTimeout(() => {
+		BBJS.remove();
+	}, 3000)
+}
+
+function STjumpscare(){
+	let STJS = document.createElement("a-image")
+	STJS.setAttribute("position", "0 0 -2");
+	STJS.setAttribute("height", "6");
+	STJS.setAttribute("width", "12");
+	STJS.setAttribute("src" , "STjumpscare.jpg");
+	camera.append(STJS);
+	let jumpscare = document.querySelector("#jumpscare");
+	jumpscare.components.sound.playSound(); 
+	cameraSystem.setAttribute("visible", false);
+	controlPanel.setAttribute("visible", false);
+	
+	setTimeout(() => {
+		STJS.remove();
+		defeat();
+	}, 3000)
+}
+
 function countdown() {
     if (t > 0) {
         setTimeout(() => {
@@ -126,11 +191,6 @@ function countdown() {
                 if (clockElement) clockElement.setAttribute("value", `Clock: ${c}AM`);
             }
 
-            if (c === 6) {
-                victory();
-                return;
-            }
-
             if (t % 12 == 0) {
                 ventCounter++;
 
@@ -141,6 +201,14 @@ function countdown() {
             }
             countdown();
         }, 1000);
+		
+		if(t % 50 == 0 && t < 350 && loss == false){
+			camera.setAttribute("position", "5 2.5 4");
+			BBjumpscare();
+		}
+    }
+	if (c == 6 && loss == false) {
+        victory();
     }
 }
 
@@ -163,27 +231,6 @@ document.addEventListener('keydown', function(event) {
 });
 
 
-function victory() {
-	console.log("hi");
-	let win = document.querySelector("#win");
-	let winSound = document.querySelector("#winSound");
-	winSound.components.sound.playSound(); 
-	win.setAttribute("opacity", "1");
-}
-
-function BBjumpscare(){
-	let BBJS = document.querySelector("#BB");
-	let jumpscare = document.querySelector("#jumpscare");
-	jumpscare.components.sound.playSound(); 
-	BBJS.setAttribute("opacity", "1");
-}
-
-function STjumpscare(){
-	let STJS = document.querySelector("#ST");
-	let jumpscare = document.querySelector("#jumpscare");
-	jumpscare.components.sound.playSound(); 
-	STJS.setAttribute("opacity", "1");
-}
 
 
 function loop(){
@@ -198,16 +245,17 @@ function loop(){
         Math.abs(pos.z - (-55.91)) < epsilon)
     ) {
         springtrap.idle();
+		move = true;
     }
 	
 	//springtrap.walk();
 	if(currentAnimation == "springtrap_v9_1_skeleton|idlepain" && (Math.abs(pos.x - 32.46) < epsilon && Math.abs(pos.z - (-55.91)) < epsilon)){
-		if(t%4 === 0 && !timeoutTriggered && t <= 350){
-			timeoutTriggered = true;
+		if(t%4 == 0 && t <= 350 && moving){
+			moving = false;
 			setTimeout(()=>{
 				whichWay1 = Math.floor(Math.random() * 2)
-				timeoutTriggered = false;
-			},100)
+				moving = true;
+			},2000)
 		}
 	}
 	
@@ -241,12 +289,218 @@ function loop(){
 			move = false;
 		}
 		springtrap.crouchZ(-1);
+		if((Math.abs(pos.x - 18.14) < epsilon &&
+        Math.abs(pos.z - (-65.01)) < epsilon)){
+			whichWay2 = -1;
+			whichWay14 = 1;
+			move = true;
+		}
 	} 
+	
+	if(whichWay14 == 1){
+		springtrap.turn(-90);
+		springtrap.crouchX(-1);
+		if(move){
+			springtrap.placement(-14.25, -64.71)
+			move = false;
+		}
+		if((Math.abs(pos.x - -35.64) < epsilon &&
+        Math.abs(pos.z - (-64.71)) < epsilon)){
+			whichWay14 = -1;
+			whichWay15 = 1;
+			move = true;
+		}
+	}
+	
+	if(whichWay15 == 1){
+		springtrap.turn(0);
+		springtrap.crouchZ(1)
+		if(move){
+			springtrap.placement(-38.53, -61.26)
+			move = false;
+		}
+		if((Math.abs(pos.x - -38.53) < epsilon &&
+        Math.abs(pos.z - (-26.74)) < epsilon)){
+			whichWay15 = -1;
+			whichWay17 = 1;
+			move = true;
+		}
+	}
+	
+	
 	
 	if(whichWay2 == 0){
 		springtrap.turn(0);
 		springtrap.walkZ(1);
+		if((Math.abs(pos.x - 15.33) < epsilon &&
+        Math.abs(pos.z - (-40.24)) < epsilon)){
+			whichWay2 = -1;
+			whichWay6 = 1;
+			move = true;
+		}
 	} 
+	
+	if(whichWay6 == 1){
+		springtrap.turn(-90)
+		springtrap.walkX(-1);
+		if((Math.abs(pos.x - -7.318) < epsilon &&
+        Math.abs(pos.z - (-40.24)) < epsilon)){
+			whichWay6 = -1;
+			whichWay7 = Math.floor(Math.random() * 2);
+			move = true;
+		}
+	}
+	
+	if(whichWay7 == 0){
+		springtrap.turn(0);
+		springtrap.walkZ(1);
+		if((Math.abs(pos.x - -7.318) < epsilon &&
+        Math.abs(pos.z - (-23.81)) < epsilon)){
+			whichWay7 = -1;
+			whichWay8 = Math.floor(Math.random() * 2);
+			move = true;
+		}
+	}
+	
+	if(whichWay7 == 1){
+		springtrap.walkX(-1);
+		if((Math.abs(pos.x - -17.23) < epsilon &&
+        Math.abs(pos.z - (-40.24)) < epsilon)){
+			whichWay7 = -1;
+			whichWay12 = Math.floor(Math.random() * 2);
+			move = true;
+		}
+	}
+	
+	if(whichWay12 == 0){
+		springtrap.turn(0);
+		springtrap.walkZ(1);
+		if((Math.abs(pos.x - -17.23) < epsilon &&
+        Math.abs(pos.z - (-23.81)) < epsilon)){
+			whichWay12 = -1;
+			whichWay13 = 0;
+		}
+	}
+	
+	if(whichWay12 == 1){
+		springtrap.crouchX(-1)
+		if(move){
+			springtrap.placement(-19.69, -45.45);
+			move = false;
+		}
+		if((Math.abs(pos.x - -27.70) < epsilon &&
+        Math.abs(pos.z - (-45.45)) < epsilon)){
+			whichWay12 = -1;
+			whichWay16 = 1
+			move = true;
+		}
+	}	
+	
+	if(whichWay16 == 1){
+		springtrap.turn(0);
+		springtrap.crouchZ(1);
+		if(move){
+			springtrap.placement(-30.25, -42.18);
+			move = false;
+		}
+		if((Math.abs(pos.x - -30.25) < epsilon &&
+        Math.abs(pos.z - (-8.73)) < epsilon)){
+			whichWay16 = -1;
+			whichWay17 = 1;
+			move = true;
+		}
+	}
+	
+	if(whichWay17 == 1){
+		springtrap.turn(90)
+		springtrap.crouchX(1)
+		if(move){
+			springtrap.placement(-26.54, -8.28);
+			move = false;
+		}
+		if((Math.abs(pos.x - -15.20) < epsilon &&
+        Math.abs(pos.z - (-8.28)) < epsilon)){
+			whichWay17 = -1;
+			whichWay11 = 1;
+			move = true;
+		}	
+	}
+	
+	
+	if(whichWay13 == 0){
+		springtrap.turn(90);
+		springtrap.walkX(1);
+		if((Math.abs(pos.x - -9.40) < epsilon &&
+        Math.abs(pos.z - (-23.81)) < epsilon)){
+			whichWay13 = -1;
+			whichWay8 = Math.floor(Math.random() * 2);
+			move = true;
+		}
+	}
+	
+	
+	if(whichWay8 == 0){
+		springtrap.turn(90);
+		springtrap.walkX(1);
+		if((Math.abs(pos.x - 30.52) < epsilon &&
+        Math.abs(pos.z - (-23.81)) < epsilon)){
+			whichWay8 = -1;
+			whichWay9 = Math.floor(Math.random() * 2);
+			move = true;
+		}
+	}
+	
+	if(whichWay8 == 1){
+		springtrap.turn(0)
+		springtrap.crouchZ(1)
+		if(move){
+			springtrap.placement(-9.62, -23.02);
+			move = false;
+		}
+		if((Math.abs(pos.x - -9.62) < epsilon &&
+        Math.abs(pos.z - (-6.83)) < epsilon)){
+			whichWay8 = -1;
+			whichWay11 = 1;
+			move = true;
+		}
+	}
+	
+	if(whichWay9 == 0){
+		springtrap.turn(0);
+		springtrap.walkZ(1);
+		if((Math.abs(pos.x - 30.52) < epsilon &&
+        Math.abs(pos.z - (-6.83)) < epsilon)){
+			whichWay9 = -1;
+			whichWay10 = Math.floor(Math.random() * 2);
+			move = true;
+		}
+	}
+	
+	if(whichWay10 == 0){
+		springtrap.turn(-90)
+		springtrap.walkX(-1);
+		if((Math.abs(pos.x - -9.62) < epsilon &&
+        Math.abs(pos.z - (-6.83)) < epsilon)){
+			whichWay10 = -1;
+			whichWay11 = 1;
+			move = true;
+		}
+	}
+	
+	if(whichWay11 == 1){
+		springtrap.turn(0);
+		springtrap.walkZ(1);
+		if(move){
+			springtrap.placement(-9.62, -6.83);		
+			move = false;
+		}
+		if((Math.abs(pos.x - -9.62) < epsilon &&
+        Math.abs(pos.z - (-2.2)) < epsilon)){
+			whichWay11 = -1
+			whichWay5 = 1
+			move = true;
+		}
+	}
 	
 	if(whichWay3 == 1){
 		springtrap.turn(0)
@@ -255,30 +509,61 @@ function loop(){
 			move = false;
 		}
 		springtrap.crouchZ(1);
+		if((Math.abs(pos.x - 54.71) < epsilon &&
+        Math.abs(pos.z - (-15.45)) < epsilon)){
+			whichWay3 = -1;
+			whichWay4 = 1;
+			move = true;
+		}
 	}
 	
+	if(whichWay4 == 1){
+		springtrap.turn(-90);
+		springtrap.crouchX(-1)
+		if(move){
+			springtrap.placement(47.73, 4.91);
+			move = false;
+		}
+		if((Math.abs(pos.x - 18.24) < epsilon &&
+        Math.abs(pos.z - (4.91)) < epsilon)){
+			console.log("hi");
+			whichWay4 = -1;
+			whichWay5 = 1;
+			move = true;
+		}
+	}
 	
-	if((cameraPos.x == 32.46 && cameraPos.y == 6 && cameraPos.z == -51.91) && (prevAudio < audioCounter) && (Math.abs(pos.x - 15.33) < 10 && Math.abs(pos.z - (-55.91)) < 10)){
-		prevAudio = audioCounter;
-		console.log("hi");
-		springtrap.placement(32.46, -55.91);
+	if(whichWay5 == 1){
+		springtrap.turn(0);
+		springtrap.locked();
+		if(move){
+			springtrap.placement(4.93, -1);
+			camera.setAttribute("position", "5 2.5 4");
+			move = false;
+			setTimeout(() => {
+				STjumpscare();
+				loss = true;
+			},4000)
+		}
+	}
+	
+	console.log(pos.x);
+	console.log(pos.z);
+
+	if((cameraPos.x == 32.46 && cameraPos.y == 6 && cameraPos.z == -51.91) && (prevAudio < audioCounter) && (Math.abs(pos.x - 15.33) < 5 && Math.abs(pos.z - (-55.91)) < 5)){
+		whichWay1 = -1;
 		springtrap.idle();
+		prevAudio = audioCounter;
+		springtrap.placement(32.46, -55.91);
 	}
 
-	if((cameraPos.x == 54.48 && cameraPos.y == 2.5 && cameraPos.z == -39.62) && (prevVent < ventUsed) && (Math.abs(pos.x - 54.48) < 10 && Math.abs(pos.z - (-39.62)) < 10)){
+	if((cameraPos.x == 54.48 && cameraPos.y == 2.5 && cameraPos.z == -39.62) && (prevVent < ventUsed) && (Math.abs(pos.x - 54.48) < 5 && Math.abs(pos.z - (-39.62)) < 5)){
+		whichWay3 = -1;
+		springtrap.idle();
 		prevVent = ventUsed;
 		springtrap.placement(32.46, -55.91);
-		springtrap.idle();
 	}
 	
-	if(prevVent < ventUsed){
-		prevVent = ventUsed;
-	}
-	
-	
-	//springtrap.crouchIdle();
-	//springtrap.run();
-	//springtrap.runFast();
 	
 	window.requestAnimationFrame(loop);
 }
