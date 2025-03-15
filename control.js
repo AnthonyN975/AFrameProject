@@ -139,8 +139,8 @@ class Boxes {
 		})
         cameraError.addEventListener("click", () => {
 			if(Controlclick){
+				cameraCounter = 0;
 		    	blinkText(cameraError, cameraErrorMessage);	
-				audioCounter = 0;
 			}
         })
     }
