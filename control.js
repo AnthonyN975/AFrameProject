@@ -139,10 +139,8 @@ class Boxes {
 		})
         cameraError.addEventListener("click", () => {
 			if(Controlclick){
-		    	blinkText(ventilationError, ventilationErrorMessage);	
-				ventCounter = 0;
-				ventUsed = ventCounter;
-				prevVent = ventUsed;
+		    	blinkText(cameraError, cameraErrorMessage);	
+				audioCounter = 0;
 			}
         })
     }
